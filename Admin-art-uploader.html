@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Art Admin Panel</title>
+  <script type="module">
+    // Firebase SDK imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCheKQGsyLYn7uubsmsJW0HKGPCnmwhs_c",
+      authDomain: "artsite-b628f.firebaseapp.com",
+      projectId: "artsite-b628f",
+      storageBucket: "artsite-b628f.firebasestorage.app",
+      messagingSenderId: "606907233471",
+      appId: "1:606907233471:web:0a2a0b3729ecad1cab420a",
+      measurementId: "G-YD4H3JR23H"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("artForm");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = form.title.value.trim();
+        const artist = form.artist.value.trim();
+        const price = parseFloat(form.price.value);
+        const image = form.image.value.trim();
+        const category = form.category.value.trim();
+        const description = form.description.value.trim();
+
+        try {
+          await addDoc(collection(db, "artworks"), {
+            title,
+            artist,
+            price,
+            image,
+            category,
+            description,
+            size: "Unknown",
+            year: new Date().getFullYear(),
+            medium: "Unknown"
+          });
+          alert("🎉 Art uploaded successfully!");
+          form.reset();
+        } catch (err) {
+          alert("❌ Error adding artwork: " + err.message);
+        }
+      });
+    });
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 15px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: teal;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover { background: darkslategray; }
+  </style>
+</head>
+<body>
+  <h2>🖼️ Add New Artwork</h2>
+  <form id="artForm">
+    <label>Title:
+      <input type="text" name="title" required />
+    </label>
+    <label>Artist:
+      <input type="text" name="artist" required />
+    </label>
+    <label>Price (USD):
+      <input type="number" name="price" required />
+    </label>
+    <label>Image URL:
+      <input type="text" name="image" required />
+    </label>
+    <label>Category:
+      <select name="category" required>
+        <option value="painting">Painting</option>
+        <option value="sculpture">Sculpture</option>
+        <option value="photography">Photography</option>
+        <option value="digital">Digital</option>
+      </select>
+    </label>
+    <label>Description:
+      <textarea name="description" rows="4"></textarea>
+    </label>
+    <button type="submit">+ Add Artwork</button>
+  </form>
+</body>
+</html>
